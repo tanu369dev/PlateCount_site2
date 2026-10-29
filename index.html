@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PlateCount | RSVP to real headcount</title>
+<meta name="description" content="PlateCount turns event RSVPs into a realistic headcount so you order the right amount of food. Track confirmations, send reminders and plan plates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;color:#0B1B4A;background:#fff;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button,select,input{font-family:inherit}
+h1,h2,h3{font-family:'Manrope',sans-serif;margin:0}
+input[type=range]{width:100%;min-height:44px;accent-color:#2563EB;margin:0}
+:focus-visible{outline:3px solid #60A5FA;outline-offset:3px}
+
+.wrap{max-width:1180px;margin:0 auto;padding:112px 24px}
+.eyebrow{font-size:14px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:#2563EB}
+.h2{font-weight:800;font-size:clamp(32px,4.4vw,54px);line-height:1.06;letter-spacing:-1.5px;margin-top:16px}
+.lead{font-size:18px;line-height:1.65;color:#475569;margin:20px 0 0}
+.center{text-align:center}
+.row{display:flex;flex-wrap:wrap}
+.col{flex:1 1 320px;min-width:0}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 32px;border-radius:999px;font-weight:600;font-size:17px;text-decoration:none;border:0;cursor:pointer;transition:transform .2s,filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn-primary{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;box-shadow:0 12px 32px -8px rgba(59,130,246,.7)}
+.btn-ghost{color:#fff;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.06)}
+.btn-sm{min-height:44px;padding:0 22px;font-size:15px}
+
+.lift{transition:transform .3s,box-shadow .3s}
+.lift:hover{transform:translateY(-6px);box-shadow:0 28px 56px -20px rgba(37,99,235,.35)}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+.no-js .reveal{opacity:1;transform:none}
+
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes glow{0%,100%{opacity:.6}50%{opacity:1}}
+.floaty{animation:floaty 7s ease-in-out infinite}
+.rise{animation:rise .9s ease both}.rise2{animation:rise .9s .15s ease both}.rise3{animation:rise .9s .3s ease both}
+
+/* hero */
+.hero{position:relative;overflow:hidden;color:#fff;background:radial-gradient(900px 520px at 85% -5%,rgba(59,130,246,.55),transparent 60%),radial-gradient(700px 480px at 5% 25%,rgba(99,102,241,.3),transparent 60%),linear-gradient(180deg,#050B24 0%,#08143A 70%,#0B1F55 100%)}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:56px 56px;opacity:.7}
+.hero-in{position:relative;max-width:1180px;margin:0 auto;padding:22px 24px 96px}
+nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand-name{font-family:'Manrope',sans-serif;font-weight:800;font-size:23px;letter-spacing:-.5px;color:#fff;line-height:1.1}
+.brand-sub{font-size:11px;color:#9FB3E6;letter-spacing:.4px;margin-top:3px}
+.links{display:flex;flex-wrap:wrap;align-items:center;gap:4px 26px}
+.links a{color:#C7D4F5;text-decoration:none;font-size:15px;padding:12px 0}
+.links a.btn{background:#fff;color:#0B1B4A;padding:0 22px;min-height:44px;font-size:15px}
+.badge{display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(148,180,255,.35);background:rgba(37,99,235,.18);color:#BFD3FF;font-size:14px;padding:8px 18px;border-radius:999px}
+.badge i{width:8px;height:8px;border-radius:50%;background:#38BDF8;display:inline-block;animation:glow 4s ease-in-out infinite}
+.hero h1{font-weight:800;font-size:clamp(36px,6vw,76px);line-height:1.04;letter-spacing:-2.2px;margin:28px auto 0;max-width:980px}
+.grad{background:linear-gradient(90deg,#60A5FA,#38BDF8 50%,#A5B4FC);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#60A5FA}
+.hero p.sub{font-size:clamp(17px,2vw,21px);line-height:1.6;color:#B8C7EE;margin:26px auto 0;max-width:680px}
+.flow{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:14px 12px;margin-top:44px;font-size:15px;color:#DCE8FF}
+.pill{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:10px 18px}
+.pill b{width:24px;height:24px;border-radius:50%;background:#2563EB;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+
+/* mock dashboard */
+.mock-ring{background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.04));padding:1px;border-radius:26px;box-shadow:0 60px 120px -30px rgba(37,99,235,.55);max-width:1020px;margin:72px auto 0}
+.mock{background:#0C1A46;border-radius:25px;padding:22px 22px 26px;color:#fff}
+.tile{flex:1 1 200px;min-width:0;background:#10224F;border:1px solid #1D3373;border-radius:16px;padding:18px 20px}
+.tile .k{font-size:13px;color:#9FB3E6}
+.tile .v{font-family:'Manrope',sans-serif;font-weight:800;font-size:38px;letter-spacing:-1px;margin-top:4px}
+.tile.hl{background:linear-gradient(135deg,#1E4FD8,#2B6BF0);border-color:#4F86F7}
+.tile.hl .k{color:#DCE8FF}
+.tile.gap{border-color:#6E3350}.tile.gap .k,.tile.gap .v{color:#FDA4AF}
+.barrow{display:flex;align-items:center;gap:12px}
+.barrow .n{flex:0 0 108px;font-size:13px;color:#9FB3E6}
+.track{flex:1 1 0;min-width:0;height:12px;background:#1A2D63;border-radius:999px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#3B82F6,#38BDF8);width:0}
+.barrow .p{flex:0 0 40px;text-align:right;font-size:13px;color:#DCE8FF;font-weight:600}
+
+/* problem */
+.stat{font-family:'Manrope',sans-serif;font-weight:800;font-size:40px;letter-spacing:-1px}
+.seg{display:flex;flex-wrap:wrap;gap:8px;padding:5px;background:#E3ECFD;border-radius:999px}
+.seg button{flex:1 1 150px;min-height:44px;border:0;border-radius:999px;font-weight:600;font-size:15px;cursor:pointer;background:transparent;color:#475569;transition:all .3s}
+.seg button[aria-pressed=true]{background:#fff;color:#0B1B4A;box-shadow:0 2px 8px rgba(11,27,74,.15)}
+.dots{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:7px;margin-top:28px}
+.dots i{aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,#2563EB,#38BDF8);transition:background .6s,transform .6s}
+.dots i.gone{background:#DDE5F5;transform:scale(.7)}
+
+/* cards */
+.card{background:#fff;border:1px solid #DCE6FB;border-radius:24px;padding:34px}
+.icon-box{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#3B82F6,#2563EB);display:flex;align-items:center;justify-content:center}
+.card h3{font-size:24px;letter-spacing:-.5px;margin:22px 0 0}
+.card p{font-size:16px;line-height:1.65;color:#475569;margin:10px 0 0}
+
+/* steps */
+.stepbtn{flex:1 1 220px;min-width:0;text-align:left;cursor:pointer;border-radius:20px;padding:22px 24px;min-height:44px;background:#F4F7FF;color:#0B1B4A;border:1px solid #DCE6FB;transition:all .25s}
+.stepbtn[aria-pressed=true]{background:linear-gradient(135deg,#2563EB,#3B82F6);color:#fff;border-color:#2563EB}
+.stepbtn small{display:block;font-family:'Manrope',sans-serif;font-weight:800;font-size:14px;opacity:.8}
+.stepbtn strong{display:block;font-family:'Manrope',sans-serif;font-size:21px;letter-spacing:-.3px;margin-top:6px}
+.stage{margin-top:22px;background:linear-gradient(135deg,#0A1840,#12296B);color:#fff;border-radius:28px;padding:clamp(28px,4vw,52px);gap:36px;align-items:center}
+.illus{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:12px;margin-bottom:14px}
+.prog{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:22px}
+.prog .bar{height:10px;background:rgba(255,255,255,.12);border-radius:999px;margin-top:12px;overflow:hidden}
+.prog .bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#3B82F6,#38BDF8);transition:width .5s}
+
+/* features */
+.dark{background:#060E2B;color:#fff}
+.dark .eyebrow{color:#7DB1FF}
+.fcard{flex:1 1 340px;min-width:0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:32px}
+.fcard h3{font-size:22px;letter-spacing:-.3px;margin:18px 0 0}
+.fcard p{font-size:16px;line-height:1.65;color:#B8C7EE;margin:10px 0 0}
+
+/* demo */
+.demo{margin-top:48px;background:#fff;border:1px solid #DCE6FB;border-radius:28px;padding:clamp(20px,3vw,36px);box-shadow:0 30px 80px -40px rgba(37,99,235,.35)}
+.dtile{flex:1 1 180px;min-width:0;background:#F4F7FF;border-radius:18px;padding:18px 20px}
+.dtile .k{font-size:13px;color:#64748B}
+.dtile .v{font-family:'Manrope',sans-serif;font-weight:800;font-size:34px;letter-spacing:-1px;margin-top:2px}
+.dtile.hl{background:linear-gradient(135deg,#1E4FD8,#2B6BF0);color:#fff}.dtile.hl .k{color:#DCE8FF}
+.dtile.gap{background:#FFF1F3}.dtile.gap .k{color:#9F1239}.dtile.gap .v{color:#BE123C}
+.gbar{margin-top:22px;height:16px;border-radius:999px;background:#FBD5DB;overflow:hidden}
+.gbar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#2563EB,#38BDF8);transition:width .3s}
+.grows{margin-top:28px;border:1px solid #E2E8F0;border-radius:20px;overflow:hidden}
+.grow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 24px;padding:16px 22px;border-top:1px solid #E2E8F0}
+.grow:first-child{border-top:0}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:5px 12px;border-radius:999px;background:#FEF3C7;color:#78350F}
+.chip.ok{background:#DCFCE7;color:#14532D}
+.toast{margin-top:16px;background:#E8F1FF;border:1px solid #BCD3FA;border-radius:14px;padding:14px 18px;font-size:15px;font-weight:500}
+.btn-outline{background:#fff;color:#0B1B4A;border:1px solid #C5D5F5}
+
+/* calculator */
+.calc{background:#F4F7FF;border:1px solid #DCE6FB;border-radius:28px;padding:clamp(22px,3vw,36px)}
+.calc label{display:flex;justify-content:space-between;font-size:15px;font-weight:500;margin-top:10px}
+.calc label b{color:#2563EB}
+.res{flex:1 1 150px;min-width:0;background:#fff;border:1px solid #DCE6FB;border-radius:18px;padding:16px 18px}
+.res .k{font-size:13px;color:#64748B}
+.res .v{font-family:'Manrope',sans-serif;font-weight:800;font-size:30px;letter-spacing:-1px}
+.res.hl{background:linear-gradient(135deg,#1E4FD8,#2B6BF0);color:#fff;border:0}.res.hl .k{color:#DCE8FF}
+
+/* signup */
+.cta{position:relative;overflow:hidden;color:#fff;background:radial-gradient(800px 420px at 50% 0%,rgba(59,130,246,.5),transparent 65%),linear-gradient(180deg,#08143A,#050B24)}
+.field{width:100%;min-height:56px;border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:0 20px;font-size:17px;background:rgba(255,255,255,.08);color:#fff}
+.field option{background:#0F1F52}
+footer{background:#030717;color:#9FB3E6}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body class="no-js">
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+<div class="hero-in">
+<nav>
+<a class="brand" href="#top" aria-label="PlateCount home">
+<svg width="40" height="40" viewBox="0 0 40 40" role="img" aria-label="PlateCount logo: a plate with a check mark"><defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#2563EB"/></linearGradient></defs><circle cx="20" cy="20" r="18" fill="url(#lg1)"/><circle cx="20" cy="20" r="12.5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6"/><path d="M13.5 20.5l4.8 4.8 8.7-10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<div><div class="brand-name">PlateCount</div><div class="brand-sub">RSVP to real headcount</div></div>
+</a>
+<div class="links">
+<a href="#problem">Problem</a><a href="#how">How it works</a><a href="#features">Features</a><a href="#demo">Live demo</a><a href="#customers">Who it is for</a>
+<a class="btn" href="#signup">Get early access</a>
+</div>
+</nav>
+
+<div id="top" class="center" style="margin-top:84px">
+<div class="badge rise"><i></i>Early access is open for event organisers</div>
+<h1 class="rise2">200 Guests Confirmed.<br>Only 150 Showed Up.<br><span class="grad">Stop Wasting Food and Money.</span></h1>
+<p class="sub rise3">PlateCount turns RSVPs into a realistic headcount. Track confirmations, send automatic reminders, estimate who will really arrive, and order food for the crowd you will actually have.</p>
+<div class="rise3" style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:38px">
+<a class="btn btn-primary" href="#signup">Get early access</a>
+<a class="btn btn-ghost" href="#demo">Try the live demo</a>
+</div>
+<div class="flow rise3">
+<div class="pill"><b>1</b>Collect RSVPs</div>
+<svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="#7DB1FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 7h19M14 1l6 6-6 6"/></svg>
+<div class="pill"><b>2</b>Predict who really comes</div>
+<svg width="22" height="14" viewBox="0 0 22 14" fill="none" stroke="#7DB1FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 7h19M14 1l6 6-6 6"/></svg>
+<div class="pill"><b>3</b>Order the right plate count</div>
+</div>
+</div>
+
+<div class="floaty">
+<div class="mock-ring"><div class="mock">
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px">
+<div style="display:flex;gap:8px" aria-hidden="true"><i style="width:11px;height:11px;border-radius:50%;background:#33436F"></i><i style="width:11px;height:11px;border-radius:50%;background:#33436F"></i><i style="width:11px;height:11px;border-radius:50%;background:#33436F"></i></div>
+<div style="font-size:14px;color:#9FB3E6">Wedding reception, 200 invited</div>
+<div style="font-size:12px;font-weight:600;color:#7DD3FC;border:1px solid rgba(125,211,252,.4);padding:4px 12px;border-radius:999px">Sample data</div>
+</div>
+<div class="row" style="gap:14px;margin-top:20px">
+<div class="tile"><div class="k">Invited</div><div class="v" id="hInv">0</div></div>
+<div class="tile"><div class="k">Confirmed</div><div class="v" id="hConf">0</div></div>
+<div class="tile hl"><div class="k">Estimated to arrive</div><div class="v" id="hEst">0</div></div>
+<div class="tile gap"><div class="k">Attendance gap</div><div class="v" id="hGap">0</div></div>
+</div>
+<div class="row" style="gap:14px;margin-top:14px">
+<div class="tile" style="flex:2 1 420px">
+<div style="font-size:14px;font-weight:600;color:#DCE8FF">Expected attendance by guest group</div>
+<div id="heroBars" style="display:flex;flex-direction:column;gap:12px;margin-top:16px"></div>
+</div>
+<div class="tile" style="flex:1 1 240px">
+<div style="font-size:14px;font-weight:600;color:#DCE8FF">Reminder schedule</div>
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;font-size:13px;color:#9FB3E6">
+<div>&#9679; 7 days before: "Still coming?"</div><div>&#9679; 3 days before: final confirm</div><div>&#9679; Caterer headcount shared</div>
+</div>
+</div>
+</div>
+</div></div>
+</div>
+</div>
+</header>
+
+<main>
+<!-- ===== PROBLEM ===== -->
+<section id="problem">
+<div class="wrap">
+<div class="row" style="gap:64px;align-items:center">
+<div class="col reveal" style="flex-basis:380px">
+<div class="eyebrow">The problem</div>
+<h2 class="h2">A "yes" on the list is not a seat filled.</h2>
+<p class="lead">Guests confirm weeks ahead, then plans change. The caterer still cooks for every name on the list, so the gap between confirmed and arrived turns into empty plates, wasted food and money spent for nobody.</p>
+<div class="row" style="gap:12px 36px;margin-top:34px">
+<div><div class="stat">200</div><div style="font-size:14px;color:#64748B">confirmed</div></div>
+<div><div class="stat" style="color:#2563EB">150</div><div style="font-size:14px;color:#64748B">arrived</div></div>
+<div><div class="stat" style="color:#E11D48">50</div><div style="font-size:14px;color:#64748B">empty plates</div></div>
+</div>
+<p style="font-size:14px;color:#64748B;margin:14px 0 0">An illustrative example, not a measured statistic.</p>
+<div style="margin-top:32px;max-width:380px">
+<svg viewBox="0 0 320 320" width="100%" role="img" aria-label="Top view of a banquet table with ten places. Seven guests are seated and three seats are empty with uneaten food on the plates.">
+<circle cx="160" cy="160" r="108" fill="#E8F1FF" stroke="#BCD3FA" stroke-width="2"/>
+<g fill="#2563EB"><circle cx="288" cy="160" r="14"/><circle cx="264" cy="235" r="14"/><circle cx="200" cy="282" r="14"/><circle cx="56" cy="235" r="14"/><circle cx="32" cy="160" r="14"/><circle cx="56" cy="85" r="14"/><circle cx="200" cy="38" r="14"/></g>
+<g fill="#DDE5F5" stroke="#B7C6E6" stroke-width="1.5" stroke-dasharray="3 3"><circle cx="120" cy="282" r="14"/><circle cx="120" cy="38" r="14"/><circle cx="264" cy="85" r="14"/></g>
+<g fill="#fff" stroke="#94B4F0" stroke-width="2"><circle cx="238" cy="160" r="20"/><circle cx="223" cy="206" r="20"/><circle cx="184" cy="234" r="20"/><circle cx="136" cy="234" r="20"/><circle cx="97" cy="206" r="20"/><circle cx="82" cy="160" r="20"/><circle cx="97" cy="114" r="20"/><circle cx="136" cy="86" r="20"/><circle cx="184" cy="86" r="20"/><circle cx="223" cy="114" r="20"/></g>
+<g fill="#38BDF8"><circle cx="238" cy="160" r="9"/><circle cx="223" cy="206" r="9"/><circle cx="184" cy="234" r="9"/><circle cx="97" cy="206" r="9"/><circle cx="82" cy="160" r="9"/><circle cx="97" cy="114" r="9"/><circle cx="184" cy="86" r="9"/></g>
+<g fill="#FB7185"><circle cx="136" cy="234" r="9"/><circle cx="136" cy="86" r="9"/><circle cx="223" cy="114" r="9"/></g>
+<text x="160" y="156" text-anchor="middle" font-family="Manrope, sans-serif" font-weight="800" font-size="22" fill="#0B1B4A">10 plates</text>
+<text x="160" y="178" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#475569">3 never eaten</text>
+</svg>
+<div style="display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:#64748B;margin-top:4px"><span><i style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#38BDF8;vertical-align:-1px;margin-right:8px"></i>Eaten</span><span><i style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#FB7185;vertical-align:-1px;margin-right:8px"></i>Wasted</span></div>
+</div>
+</div>
+
+<div class="col reveal" style="flex-basis:440px;background:#F4F7FF;border:1px solid #DCE6FB;border-radius:28px;padding:30px">
+<div class="seg">
+<button id="bList" aria-pressed="true">On the guest list</button>
+<button id="bDay" aria-pressed="false">On the day</button>
+</div>
+<div class="dots" id="dots" aria-hidden="true"></div>
+<div id="dotsCap" style="margin-top:24px;font-size:17px;font-weight:600"></div>
+<div id="dotsSub" style="margin-top:6px;font-size:15px;color:#475569;line-height:1.55"></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===== SOLUTION ===== -->
+<section style="background:#F4F7FF">
+<div class="wrap">
+<div class="center reveal">
+<div class="eyebrow">Our solution</div>
+<h2 class="h2" style="max-width:800px;margin-left:auto;margin-right:auto">Plan for the guests who will arrive, not just the ones who replied.</h2>
+</div>
+<div class="row reveal" style="gap:22px;margin-top:56px">
+<div class="card lift col"><div class="icon-box"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg></div><h3>Smarter guest management</h3><p>One place for every guest group, RSVP status and reminder, instead of chat threads and spreadsheets.</p></div>
+<div class="card lift col"><div class="icon-box"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></div><h3>A realistic attendance estimate</h3><p>Set expected show-up rates per guest group and watch the headcount update as you change them.</p></div>
+<div class="card lift col"><div class="icon-box"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11h18"/><path d="M5 11a7 7 0 0 1 14 0"/><path d="M2 15h20"/><path d="M4 15a8 8 0 0 0 16 0"/></svg></div><h3>Confident food planning</h3><p>Get a suggested plate count with a safety buffer, ready to share with your caterer.</p></div>
+</div>
+</div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section id="how">
+<div class="wrap">
+<div class="reveal">
+<div class="eyebrow">How it works</div>
+<h2 class="h2" style="max-width:760px">From first invite to final plate count in four steps.</h2>
+</div>
+<div class="row reveal" style="gap:14px;margin-top:48px" id="steps"></div>
+<div class="row stage reveal">
+<div class="col" style="flex-basis:360px">
+<div id="stTitle" style="font-family:'Manrope',sans-serif;font-weight:800;font-size:clamp(26px,3vw,38px);letter-spacing:-1px;line-height:1.15"></div>
+<p id="stText" style="font-size:18px;line-height:1.65;color:#BFD0F5;margin:16px 0 0"></p>
+</div>
+<div class="col" style="flex-basis:260px">
+<div class="illus">
+<svg id="s1" viewBox="0 0 320 190" width="100%" role="img" aria-label="A new event card showing a wedding reception, date, 200 guests and a caterer added"><rect x="20" y="14" width="280" height="162" rx="16" fill="#12296B" stroke="#3B5BB5"/><path d="M20 30a16 16 0 0 1 16-16h248a16 16 0 0 1 16 16v24H20z" fill="#2563EB"/><text x="38" y="43" font-family="Manrope, sans-serif" font-weight="800" font-size="16" fill="#fff">Wedding reception</text><text x="38" y="80" font-family="Inter, sans-serif" font-size="13" fill="#BFD0F5">14 Feb · 7:00 PM · Banquet hall</text><rect x="38" y="96" width="92" height="28" rx="14" fill="#1D3373"/><text x="84" y="114" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#fff">200 guests</text><rect x="138" y="96" width="82" height="28" rx="14" fill="#1D3373"/><text x="179" y="114" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#fff">5 groups</text><circle cx="46" cy="148" r="9" fill="#38BDF8"/><path d="M42 148l3 3 5-6" fill="none" stroke="#0B1B4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="62" y="152" font-family="Inter, sans-serif" font-size="13" fill="#DCE8FF">Caterer added to the event</text></svg>
+<svg id="s2" viewBox="0 0 320 190" width="100%" role="img" aria-label="A phone showing a WhatsApp invitation with Yes and No reply buttons" hidden><rect x="100" y="6" width="120" height="180" rx="20" fill="#0B1B4A" stroke="#3B5BB5" stroke-width="2"/><rect x="110" y="30" width="100" height="148" rx="10" fill="#0F2358"/><circle cx="122" cy="20" r="5" fill="#25D366"/><text x="132" y="24" font-family="Inter, sans-serif" font-size="10" fill="#DCE8FF">WhatsApp</text><rect x="116" y="40" width="88" height="52" rx="10" fill="#1D3373"/><text x="124" y="58" font-family="Inter, sans-serif" font-weight="600" font-size="10" fill="#fff">You are invited!</text><text x="124" y="74" font-family="Inter, sans-serif" font-size="9" fill="#BFD0F5">Wedding reception</text><text x="124" y="86" font-family="Inter, sans-serif" font-size="9" fill="#BFD0F5">Tap to reply</text><rect x="116" y="104" width="42" height="26" rx="13" fill="#2563EB"/><text x="137" y="121" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="11" fill="#fff">Yes</text><rect x="164" y="104" width="40" height="26" rx="13" fill="none" stroke="#7DB1FF"/><text x="184" y="121" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="11" fill="#DCE8FF">No</text><rect x="150" y="150" width="54" height="18" rx="9" fill="#2563EB" fill-opacity=".35"/><text x="177" y="163" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#DCE8FF">Replied</text></svg>
+<svg id="s3" viewBox="0 0 320 190" width="100%" role="img" aria-label="A list of guests with Yes, Pending and No reply statuses" hidden><rect x="14" y="10" width="292" height="170" rx="14" fill="#12296B" stroke="#3B5BB5"/><g fill="#3B5BB5"><circle cx="42" cy="42" r="12"/><circle cx="42" cy="82" r="12"/><circle cx="42" cy="122" r="12"/><circle cx="42" cy="162" r="12"/></g><g fill="#7DB1FF" fill-opacity=".6"><rect x="64" y="37" width="100" height="10" rx="5"/><rect x="64" y="77" width="82" height="10" rx="5"/><rect x="64" y="117" width="110" height="10" rx="5"/><rect x="64" y="157" width="90" height="10" rx="5"/></g><rect x="224" y="30" width="64" height="24" rx="12" fill="#14532D"/><text x="256" y="46" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="11" fill="#BBF7D0">Yes</text><rect x="224" y="70" width="64" height="24" rx="12" fill="#78350F"/><text x="256" y="86" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="11" fill="#FDE68A">Pending</text><rect x="224" y="110" width="64" height="24" rx="12" fill="#14532D"/><text x="256" y="126" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="11" fill="#BBF7D0">Yes</text><rect x="224" y="150" width="64" height="24" rx="12" fill="#7F1D1D"/><text x="256" y="166" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="11" fill="#FECACA">No</text></svg>
+<svg id="s4" viewBox="0 0 320 190" width="100%" role="img" aria-label="A plate showing a suggested count of 165 plates to order" hidden><circle cx="110" cy="95" r="78" fill="#1D3373" stroke="#60A5FA" stroke-width="3"/><circle cx="110" cy="95" r="58" fill="none" stroke="#7DB1FF" stroke-opacity=".6" stroke-width="2" stroke-dasharray="4 5"/><text x="110" y="106" text-anchor="middle" font-family="Manrope, sans-serif" font-weight="800" font-size="40" fill="#fff">165</text><text x="110" y="128" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#BFD0F5">plates</text><text x="212" y="66" font-family="Inter, sans-serif" font-size="12" fill="#9FB3E6">Sample event</text><text x="212" y="90" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#fff">150 expected</text><text x="212" y="112" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#fff">+10% buffer</text><text x="212" y="134" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#7DD3FC">35 plates saved</text></svg>
+</div>
+<div class="prog">
+<div style="display:flex;justify-content:space-between;font-size:14px;color:#9FB3E6"><span>Progress</span><span id="stNum"></span></div>
+<div class="bar"><i id="stBar"></i></div>
+<div id="stOut" style="margin-top:18px;font-size:15px;color:#DCE8FF;line-height:1.5"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section id="features" class="dark">
+<div class="wrap">
+<div class="reveal">
+<div class="eyebrow">Features</div>
+<h2 class="h2" style="max-width:760px">Everything between "save the date" and "serve the food".</h2>
+</div>
+<div class="row reveal" style="gap:20px;margin-top:56px">
+<div class="fcard lift"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><path d="M22 4 12 14l-3-3"/></svg><h3>Smart RSVP</h3><p>Guests reply with one tap. Ask for headcount, meal choice and plus-ones in the same reply.</p></div>
+<div class="fcard lift"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 20.5l1.6-5.5A8.4 8.4 0 1 1 21 11.5z"/></svg><h3>WhatsApp invitations</h3><p>Send personal invitations where your guests already are, with a reply link that needs no app.</p></div>
+<div class="fcard lift"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><h3>Automated reminders</h3><p>Schedule "Are you still coming?" nudges as the date gets closer, so changes surface early.</p></div>
+<div class="fcard lift"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="M9 15l2 2 4-4"/></svg><h3>Attendance tracking</h3><p>A live view of confirmed, pending and declined guests, by group, with check-in on the day.</p></div>
+<div class="fcard lift"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg><h3>Attendance predictions</h3><p>Estimate arrivals from your show-up assumptions per group, and refine them with each event.</p></div>
+<div class="fcard lift"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M8 6h8M8 11h2M12 11h2M8 15h2M12 15h2M8 18h8"/></svg><h3>Smart catering calculator</h3><p>Turn the estimate into a suggested plate count with a buffer, and see the cost of the gap.</p></div>
+</div>
+</div>
+</section>
+
+<!-- ===== DEMO ===== -->
+<section id="demo" style="background:#F4F7FF">
+<div class="wrap">
+<div class="reveal">
+<div class="eyebrow">Live demo</div>
+<h2 class="h2" style="max-width:780px">Drag a slider. Watch the gap move.</h2>
+<p class="lead" style="max-width:680px">This is a working demo with sample data for a 200-guest wedding. The show-up rates are your own assumptions for each group.</p>
+</div>
+<div class="demo reveal">
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
+<div style="font-family:'Manrope',sans-serif;font-weight:800;font-size:22px">Wedding reception <span style="font-weight:600;font-size:14px;color:#64748B">· sample data</span></div>
+<div style="display:flex;flex-wrap:wrap;gap:10px">
+<button class="btn btn-sm btn-primary" id="remind">Send reminders</button>
+<button class="btn btn-sm btn-outline" id="reset">Reset demo</button>
+</div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+<div class="row" style="gap:14px;margin-top:24px">
+<div class="dtile"><div class="k">Invited</div><div class="v">200</div></div>
+<div class="dtile"><div class="k">Confirmed</div><div class="v">200</div></div>
+<div class="dtile hl"><div class="k">Estimated to arrive</div><div class="v" id="dExp">150</div></div>
+<div class="dtile gap"><div class="k">Attendance gap</div><div class="v" id="dGap">50</div></div>
+<div class="dtile"><div class="k">Suggested plates (+10%)</div><div class="v" id="dPlates">165</div></div>
+</div>
+<div class="gbar" aria-hidden="true"><i id="dBar" style="width:75%"></i></div>
+<div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-top:10px;font-size:13px;color:#64748B"><span>Estimated arrivals</span><span>Possible empty seats</span></div>
+<div class="grows" id="groups"></div>
+</div>
+</div>
+</section>
+
+<!-- ===== BENEFITS + CALCULATOR ===== -->
+<section>
+<div class="wrap">
+<div class="row" style="gap:64px;align-items:flex-start">
+<div class="col reveal" style="flex-basis:380px">
+<div class="eyebrow">Benefits</div>
+<h2 class="h2">Spend on guests, not on empty plates.</h2>
+<div style="display:flex;flex-direction:column;gap:28px;margin-top:40px">
+<div style="display:flex;gap:18px"><div style="flex:0 0 44px;height:44px;border-radius:14px;background:#E8F1FF;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div style="font-family:'Manrope',sans-serif;font-weight:700;font-size:22px">Save money</div><p style="font-size:16px;line-height:1.6;color:#475569;margin:6px 0 0">Pay for the plates you will use, with a sensible buffer for surprises.</p></div></div>
+<div style="display:flex;gap:18px"><div style="flex:0 0 44px;height:44px;border-radius:14px;background:#E8F1FF;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.5 2 8 0 5.5-4.8 10-10 10z"/><path d="M2 21c0-3 1.9-5.5 6-7"/></svg></div><div><div style="font-family:'Manrope',sans-serif;font-weight:700;font-size:22px">Reduce food waste</div><p style="font-size:16px;line-height:1.6;color:#475569;margin:6px 0 0">Cook closer to real attendance so less good food ends up in the bin.</p></div></div>
+<div style="display:flex;gap:18px"><div style="flex:0 0 44px;height:44px;border-radius:14px;background:#E8F1FF;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.5 9.5-8 11-4.5-1.5-8-6-8-11V5z"/><path d="M9 12l2 2 4-4"/></svg></div><div><div style="font-family:'Manrope',sans-serif;font-weight:700;font-size:22px">Plan events confidently</div><p style="font-size:16px;line-height:1.6;color:#475569;margin:6px 0 0">Walk into the day knowing your numbers instead of hoping they hold.</p></div></div>
+</div>
+</div>
+
+<div class="col calc reveal" style="flex-basis:440px">
+<div style="font-family:'Manrope',sans-serif;font-weight:800;font-size:24px;letter-spacing:-.5px">Attendance and catering calculator</div>
+<p style="font-size:14px;color:#64748B;margin:6px 0 0">Your assumptions, your numbers. Compared with cooking for every confirmed guest.</p>
+<label for="cf" style="margin-top:22px"><span>Confirmed guests</span><b id="cfL"></b></label>
+<input id="cf" type="range" min="20" max="1000" step="10" value="200">
+<label for="cr"><span>Expected to actually attend</span><b id="crL"></b></label>
+<input id="cr" type="range" min="50" max="100" step="1" value="75">
+<label for="cb"><span>Safety buffer</span><b id="cbL"></b></label>
+<input id="cb" type="range" min="0" max="25" step="1" value="10">
+<label for="cc"><span>Cost per plate</span><b id="ccL"></b></label>
+<input id="cc" type="range" min="100" max="3000" step="50" value="900">
+<div class="row" style="gap:12px;margin-top:22px">
+<div class="res"><div class="k">Expected arrivals</div><div class="v" id="rExp"></div></div>
+<div class="res"><div class="k">Plates to prepare</div><div class="v" id="rPl"></div></div>
+<div class="res hl"><div class="k">Plates avoided</div><div class="v" id="rAv"></div></div>
+<div class="res hl"><div class="k">Estimated saving</div><div class="v" id="rSv"></div></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===== CUSTOMERS ===== -->
+<section id="customers" style="background:#F4F7FF">
+<div class="wrap">
+<div class="center reveal">
+<div class="eyebrow">Who it is for</div>
+<h2 class="h2" style="max-width:760px;margin-left:auto;margin-right:auto">Built for anyone who feeds a crowd.</h2>
+</div>
+<div class="row reveal" style="gap:20px;margin-top:56px">
+<div class="card lift" style="flex:1 1 250px;padding:30px"><div style="font-family:'Manrope',sans-serif;font-weight:700;font-size:21px">Wedding planners</div><p>Manage several families and guest lists in one place, and give caterers one clear number.</p></div>
+<div class="card lift" style="flex:1 1 250px;padding:30px"><div style="font-family:'Manrope',sans-serif;font-weight:700;font-size:21px">Party hosts</div><p>Birthdays, anniversaries and house parties without chasing every reply one by one.</p></div>
+<div class="card lift" style="flex:1 1 250px;padding:30px"><div style="font-family:'Manrope',sans-serif;font-weight:700;font-size:21px">Corporate event organisers</div><p>Dinners, offsites and celebrations with a reliable headcount and a tidy attendance record.</p></div>
+<div class="card lift" style="flex:1 1 250px;padding:30px"><div style="font-family:'Manrope',sans-serif;font-weight:700;font-size:21px">Caterers</div><p>Prepare to a live, realistic plate count and cut over-production on every booking.</p></div>
+</div>
+</div>
+</section>
+
+<!-- ===== SIGNUP ===== -->
+<section id="signup" class="cta">
+<div style="max-width:760px;margin:0 auto;padding:112px 24px;text-align:center" class="reveal">
+<h2 style="font-weight:800;font-size:clamp(36px,5.6vw,68px);line-height:1.04;letter-spacing:-2px">Make Every Invitation Count.</h2>
+<p style="font-size:19px;line-height:1.6;color:#B8C7EE;margin:22px auto 0;max-width:560px">Join the early-access list and be among the first to plan events around real attendance.</p>
+<form id="form" novalidate style="margin-top:40px;display:flex;flex-direction:column;gap:12px;text-align:left">
+<label for="em" style="font-size:14px;color:#C7D4F5">Email address</label>
+<input class="field" id="em" type="email" placeholder="you@example.com" autocomplete="email" required>
+<label for="rl" style="font-size:14px;color:#C7D4F5;margin-top:6px">I am a</label>
+<select class="field" id="rl" style="padding:0 16px"><option>Wedding planner</option><option>Party host</option><option>Corporate event organiser</option><option>Caterer</option><option>Other</option></select>
+<button class="btn btn-primary" type="submit" style="margin-top:14px;min-height:58px;border-radius:16px;font-size:18px">Get early access</button>
+<div id="err" role="alert" style="font-size:15px;font-weight:600;color:#FDA4AF" hidden>Please enter a valid email address.</div>
+</form>
+<div id="ok" role="status" hidden style="margin-top:40px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:28px;font-size:19px;line-height:1.55">You are on the list. We will email you as soon as PlateCount opens.</div>
+</div>
+</section>
+</main>
+
+<footer>
+<div style="max-width:1180px;margin:0 auto;padding:32px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;font-size:14px">
+<div style="display:flex;align-items:center;gap:10px"><svg width="28" height="28" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#2563EB"/><circle cx="20" cy="20" r="12.5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6"/><path d="M13.5 20.5l4.8 4.8 8.7-10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-family:'Manrope',sans-serif;font-weight:800;font-size:18px;color:#fff">PlateCount</span></div>
+<div>Fewer empty plates, fewer empty chairs. PlateCount is a working name.</div>
+<a href="#top" style="color:#C7D4F5;text-decoration:none;min-height:44px;display:inline-flex;align-items:center">Back to top</a>
+</div>
+</footer>
+
+<script>
+(function () {
+  document.body.classList.remove('no-js');
+  var $ = function (s) { return document.querySelector(s); };
+  var fmt = function (n) { return Math.round(n).toLocaleString('en-IN'); };
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- scroll reveal ---------- */
+  var rev = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduce) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    rev.forEach(function (el) { io.observe(el); });
+  } else { rev.forEach(function (el) { el.classList.add('in'); }); }
+
+  /* ---------- hero count-up ---------- */
+  var names = ["Bride's family", "Groom's family", 'Friends', 'Colleagues', 'Neighbours'];
+  var counts = [60, 50, 40, 30, 20];
+  var heroRates = [95, 90, 70, 50, 25];
+  var hb = $('#heroBars');
+  names.forEach(function (n, i) {
+    hb.insertAdjacentHTML('beforeend', '<div class="barrow"><div class="n">' + n + '</div><div class="track"><i></i></div><div class="p">0%</div></div>');
+  });
+  var bars = hb.querySelectorAll('.barrow');
+  function setHero(e) {
+    $('#hInv').textContent = Math.round(200 * e);
+    $('#hConf').textContent = Math.round(200 * e);
+    $('#hEst').textContent = Math.round(150 * e);
+    $('#hGap').textContent = Math.round(50 * e);
+    bars.forEach(function (b, i) {
+      b.querySelector('i').style.width = (heroRates[i] * e) + '%';
+      b.querySelector('.p').textContent = Math.round(heroRates[i] * e) + '%';
+    });
+  }
+  if (reduce) { setHero(1); } else {
+    var t0 = null;
+    (function tick(ts) {
+      if (t0 === null) t0 = ts;
+      var k = Math.min(1, (ts - t0) / 1400);
+      setHero(1 - Math.pow(1 - k, 3));
+      if (k < 1) requestAnimationFrame(tick);
+    })(performance.now());
+  }
+
+  /* ---------- problem dots ---------- */
+  var dots = $('#dots'), i;
+  for (i = 0; i < 200; i++) dots.appendChild(document.createElement('i'));
+  var dotEls = dots.children;
+  function showDay(on) {
+    for (var j = 150; j < 200; j++) dotEls[j].classList.toggle('gone', on);
+    $('#bList').setAttribute('aria-pressed', String(!on));
+    $('#bDay').setAttribute('aria-pressed', String(on));
+    $('#dotsCap').textContent = on ? '150 guests arrive. 50 plates stay full.' : '200 plates prepared for 200 confirmed guests.';
+    $('#dotsSub').textContent = on ? 'The food was already cooked and paid for. The gap is pure waste.' : 'Everyone said yes, so the caterer plans a plate for every name.';
+  }
+  $('#bList').onclick = function () { showDay(false); };
+  $('#bDay').onclick = function () { showDay(true); };
+  showDay(false);
+
+  /* ---------- how it works ---------- */
+  var steps = [
+    { t: 'Create event', x: 'Set the date, venue, meal plan and guest groups in a few minutes. Add your caterer so they can follow the plan.', o: 'Result: a single home for every guest group and detail.' },
+    { t: 'Invite guests', x: 'Send personal invitations by WhatsApp or a shareable link. Guests reply in one tap, with no app to download.', o: 'Result: replies arrive in one place, not across chat threads.' },
+    { t: 'Track RSVPs', x: 'See who has confirmed, who is pending and who needs a nudge. Automatic reminders ask guests to re-confirm as the date gets closer.', o: 'Result: late changes show up before the caterer starts cooking.' },
+    { t: 'Plan food', x: 'Turn confirmations and your attendance assumptions into a suggested plate count with a safety buffer you can share.', o: 'Result: a number you can order against with confidence.' }
+  ];
+  var sb = $('#steps');
+  steps.forEach(function (s, n) {
+    var b = document.createElement('button');
+    b.className = 'stepbtn';
+    b.innerHTML = '<small>STEP ' + (n + 1) + '</small><strong>' + s.t + '</strong>';
+    b.onclick = function () { setStep(n); };
+    sb.appendChild(b);
+  });
+  function setStep(n) {
+    Array.prototype.forEach.call(sb.children, function (b, k) { b.setAttribute('aria-pressed', String(k === n)); });
+    for (var k = 1; k <= 4; k++) $('#s' + k).hidden = (k !== n + 1);
+    $('#stTitle').textContent = steps[n].t;
+    $('#stText').textContent = steps[n].x;
+    $('#stOut').textContent = steps[n].o;
+    $('#stNum').textContent = (n + 1) + ' of 4';
+    $('#stBar').style.width = ((n + 1) * 25) + '%';
+  }
+  setStep(0);
+
+  /* ---------- demo dashboard ---------- */
+  var base = [95, 90, 70, 50, 25];
+  var rates = base.slice(), reminded = false;
+  var gw = $('#groups');
+  names.forEach(function (n, k) {
+    var r = document.createElement('div');
+    r.className = 'grow';
+    r.innerHTML =
+      '<div style="flex:1 1 170px;min-width:0"><div style="font-weight:600;font-size:16px">' + n + '</div><div style="font-size:13px;color:#64748B;margin-top:2px">' + counts[k] + ' confirmed</div></div>' +
+      '<div><span class="chip">Awaiting reminder</span></div>' +
+      '<div style="flex:2 1 220px;min-width:0"><input type="range" min="0" max="100" step="1" value="' + base[k] + '" aria-label="Expected show-up rate for ' + n + '"></div>' +
+      '<div style="flex:0 0 120px;text-align:right"><span class="ex" style="font-family:\'Manrope\',sans-serif;font-weight:800;font-size:20px"></span> <span class="rt" style="font-size:13px;color:#64748B"></span></div>';
+    r.querySelector('input').oninput = function (e) { rates[k] = +e.target.value; renderDemo(); };
+    gw.appendChild(r);
+  });
+  function renderDemo() {
+    var total = 0;
+    Array.prototype.forEach.call(gw.children, function (r, k) {
+      var ex = Math.round(counts[k] * rates[k] / 100);
+      total += ex;
+      r.querySelector('.ex').textContent = ex;
+      r.querySelector('.rt').textContent = 'at ' + rates[k] + '%';
+      var chip = r.querySelector('.chip');
+      chip.textContent = reminded ? 'Reminder sent' : 'Awaiting reminder';
+      chip.classList.toggle('ok', reminded);
+    });
+    $('#dExp').textContent = total;
+    $('#dGap').textContent = 200 - total;
+    $('#dPlates').textContent = Math.ceil(total * 1.1);
+    $('#dBar').style.width = (total / 2) + '%';
+    $('#remind').textContent = reminded ? 'Reminders sent' : 'Send reminders';
+  }
+  var tt;
+  function say(m) {
+    var t = $('#toast'); t.textContent = m; t.hidden = false;
+    clearTimeout(tt); tt = setTimeout(function () { t.hidden = true; }, 3500);
+  }
+  $('#remind').onclick = function () {
+    if (reminded) { say('Reminders already sent to all 5 groups in this demo.'); return; }
+    reminded = true; renderDemo();
+    say('Demo: "Are you still coming?" reminders queued for all 5 guest groups.');
+  };
+  $('#reset').onclick = function () {
+    rates = base.slice(); reminded = false;
+    Array.prototype.forEach.call(gw.children, function (r, k) { r.querySelector('input').value = base[k]; });
+    renderDemo(); say('Demo reset to the sample wedding.');
+  };
+  renderDemo();
+
+  /* ---------- calculator ---------- */
+  function calc() {
+    var c = +$('#cf').value, r = +$('#cr').value, b = +$('#cb').value, p = +$('#cc').value;
+    var plates = Math.min(c, Math.ceil(c * r / 100 * (1 + b / 100)));
+    var av = c - plates;
+    $('#cfL').textContent = fmt(c); $('#crL').textContent = r + '%'; $('#cbL').textContent = b + '%'; $('#ccL').textContent = '₹' + fmt(p);
+    $('#rExp').textContent = fmt(c * r / 100); $('#rPl').textContent = fmt(plates);
+    $('#rAv').textContent = fmt(av); $('#rSv').textContent = '₹' + fmt(av * p);
+  }
+  ['#cf', '#cr', '#cb', '#cc'].forEach(function (s) { $(s).addEventListener('input', calc); });
+  calc();
+
+  /* ---------- signup (front end only) ---------- */
+  $('#form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = $('#em').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { $('#err').hidden = false; $('#em').focus(); return; }
+    $('#err').hidden = true;
+    /* TODO: send { email: v, role: $('#rl').value } to your backend or form service here. */
+    $('#form').hidden = true; $('#ok').hidden = false;
+  });
+  $('#em').addEventListener('input', function () { $('#err').hidden = true; });
+})();
+</script>
+</body>
+</html>
